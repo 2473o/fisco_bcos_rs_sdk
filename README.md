@@ -9,7 +9,6 @@ Rust SDK for FISCO-BCOS  ,like some  rusted  but solid gears , help to build  bl
 - 本项目并非唯一且官方的fisco bcos rust sdk，社区陆续会有其他优秀的rust的sdk实现，提供多种选择和参考可能性
 
 
-
 ## 关键特性
 
 

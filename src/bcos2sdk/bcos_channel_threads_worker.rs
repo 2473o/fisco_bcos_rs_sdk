@@ -127,7 +127,8 @@ pub fn getNodeVersionPack() -> Option<ChannelPack> {
 
 ///每3秒钟发一次heartbeat
 async fn heart_beat_thread(worker_arc: BcosChannelWorkerArc) {
-    let mut last_heartbeat_time = time::now() - chrono::Duration::seconds(10);
+    // let mut last_heartbeat_time = time::now() - chrono::Duration::seconds(10);
+    let mut last_heartbeat_time = chrono::Utc::now() - chrono::Duration::seconds(10);
 
     loop {
         tokio::time::sleep(Duration::from_millis(100)).await;
@@ -135,12 +136,14 @@ async fn heart_beat_thread(worker_arc: BcosChannelWorkerArc) {
             break;
         }
 
-        if time::now() - last_heartbeat_time < chrono::Duration::seconds(5) {
+        // if time::now() - last_heartbeat_time < chrono::Duration::seconds(5) {
+        if chrono::Utc::now() - last_heartbeat_time < chrono::Duration::seconds(5) {
             continue;
         }
         //let heartbeatpack = make_channel_pack(CHANNEL_PACK_TYPE::HEART_BEAT, "");
         let heartbeatpack = getNodeVersionPack();
-        last_heartbeat_time = time::now();
+        // last_heartbeat_time = time::now();
+        last_heartbeat_time = chrono::Utc::now();
         println!(
             "heartbeat send {:?}",
             heartbeatpack.as_ref().unwrap().detail()

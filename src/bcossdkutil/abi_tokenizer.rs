@@ -19,7 +19,11 @@ pub trait ABITokenizer {
             ParamType::FixedArray(ref p, len) => {
                 Self::tokenize_fixed_array(value, p, len).map(Token::FixedArray)
             }
-            ParamType::Tuple(ref p) => Self::tokenize_struct(value, p).map(Token::Tuple),
+            ParamType::Tuple(ref p) => {
+                let boxed_params: Vec<Box<ParamType>> = p.iter().map(|param| Box::new(param.clone())).collect();
+                Self::tokenize_struct(value, &boxed_params).map(Token::Tuple)
+            }
+            // ParamType::Tuple(ref p) => Self::tokenize_struct(value, p).map(Token::Tuple),
         }
     }
 

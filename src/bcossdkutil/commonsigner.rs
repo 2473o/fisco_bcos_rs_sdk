@@ -227,9 +227,11 @@ lazy_static! {
 impl ICommonSigner for CommonSignerWeDPR_SM2 {
     fn sign(&self, data: Vec<u8>) -> Result<CommonSignature, KissError> {
         //let SM2SIGHER1:WedprSm2p256v1 = WedprSm2p256v1::default();
-        let start = time::now();
+        // let start = time::now();
+        let start = chrono::Utc::now();
         let result = SM2SIGHER.sign(&self.account.privkey, &data);
-        let end = time::now();
+        // let end = time::now();
+        let end = chrono::Utc::now();
         printlnex!("sign data use time {:?}", (end - start));
         match result {
             Ok(s) => {

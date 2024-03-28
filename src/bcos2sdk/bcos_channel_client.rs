@@ -120,8 +120,9 @@ impl BcosChannelClient {
     /// 按配置的超时时间读socket
     pub fn try_recv(&mut self) -> Result<Vec<u8>, KissError> {
         let mut i = 0;
-        let start = time::now();
-        while time::now() - start < chrono::Duration::seconds(self.config.timeout as i64) {
+        // let start = time::now();
+        let start = chrono::Utc::now();
+        while chrono::Utc::now() - start < chrono::Duration::seconds(self.config.timeout as i64) {
             let res = self.recv()?;
             //println!(">> try recv {}", res.len());
             if res.len() > 0 {

@@ -81,7 +81,7 @@ impl BcosTransaction {
         let mut stream = RlpStream::new();
         stream.begin_list(listsize);
         self.rlp_append_tx_elements(&mut stream);
-        let encodebytes: Vec<u8> = stream.drain();
+        let encodebytes: Vec<u8> = stream.out().to_vec();
         printlnex!("plain transaction encode size {}", encodebytes.len());
         encodebytes
     }
@@ -127,7 +127,7 @@ impl BcosTransactionWithSig {
         stream.begin_list(13);
         self.transaction.rlp_append_tx_elements(&mut stream);
         self.rlp_append_signature(&mut stream);
-        let encodebytes = stream.drain();
+        let encodebytes = stream.out().to_vec();
         printlnex!("Signed transaction encode size {}", encodebytes.len());
         encodebytes
     }

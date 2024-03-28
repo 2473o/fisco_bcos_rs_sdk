@@ -72,9 +72,11 @@ impl ABIParser {
             let paramtype = ABIParser::parse_param_type(c, "").unwrap();
             tupleparams.push(Box::new(paramtype));
         }
-        let tupleparam = ParamType::Tuple(tupleparams);
+        //     let tupleparam = ParamType::Tuple(tupleparams);
+        let tupleparam = ParamType::Tuple(tupleparams.into_iter().map(|boxed_param| *boxed_param).collect());
         tupleparam
     }
+    
 
     ///根据参数的type，构建ParamType对象，spectypename的意思是由调用者指定type名字
     /// 例如 type是tuple[],实际上按tuple解析成类似 (string,uint256)[]这样的形式，就需要指定spectypename= 'tuple'

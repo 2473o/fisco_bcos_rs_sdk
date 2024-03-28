@@ -9,7 +9,8 @@ use encoding::{DecoderTrap, Encoding};
 use encoding::all::GBK;
 use libc::{c_char, c_int, c_longlong, c_void};
 use serde_json::Value as JsonValue;
-use time::{Duration, Tm};
+// use time::{Duration, Tm};
+use chrono::{self, DateTime, Utc};
 
 use crate::{kisserr, kisserrcode, str2p};
 use crate::bcos3sdk::bcos3sdk_ini::Bcos3sdkIni;
@@ -37,7 +38,7 @@ pub struct Bcos3Client {
     pub chainid: String,
     pub node: String,
     pub reqcounter: AtomicU64,
-    pub lastblocklimittime: Tm,
+    pub lastblocklimittime: DateTime<Utc>,
     pub lastblocklimit: u64,
 }
 
@@ -127,7 +128,7 @@ impl Bcos3Client {
                 node: "".to_string(),
                 reqcounter: AtomicU64::new(0),
                 lastblocklimit: 0,
-                lastblocklimittime: time::now() - Duration::seconds(1000),
+                lastblocklimittime: chrono::Utc::now() - chrono::Duration::seconds(1000),
             };
             Ok(client)
         }
@@ -188,7 +189,8 @@ impl Bcos3Client {
     pub fn getBlocklimit(&mut self) -> Result<u64, KissError> {
         self.reqcounter.fetch_add(1, Ordering::Relaxed);
         unsafe {
-            if time::now() - self.lastblocklimittime < Duration::seconds(15) && self.lastblocklimit > 0 {
+            // if time::now() - self.lastblocklimittime < chrono::Duration::seconds(15) && self.lastblocklimit > 0 {
+            if chrono::Utc::now() - self.lastblocklimittime < chrono::Duration::seconds(15) && self.lastblocklimit > 0 {
                 //每15秒从节点更新一次blocklimit,避免频繁的更新，一般来说每秒出块绝不会超过n个，所以这个时间窗是ok的
                 return Ok(self.lastblocklimit);
             }
@@ -201,7 +203,8 @@ impl Bcos3Client {
                 return kisserr!(KissErrKind::Error,"get blocklimit from chain error,res : {}",new_blockLimit);
             }
             self.lastblocklimit = new_blockLimit as u64;
-            self.lastblocklimittime = time::now();
+            // self.lastblocklimittime = time::now();
+            self.lastblocklimittime = chrono::Utc::now();
             Ok(self.lastblocklimit)
         }
     }

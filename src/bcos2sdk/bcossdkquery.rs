@@ -72,13 +72,15 @@ impl Bcos2Client {
         refer to Python SDK: https://github.com/FISCO-BCOS/python-sdk
     */
     pub fn getBlockLimit(&mut self) -> Result<u32, KissError> {
-        let now = time::now();
+        // let now = time::now();
+        let now = chrono::Utc::now();
         printlnex!("getblocknumber cause :{}", now - self.updateblocknum_tick);
         //每30秒获取一次
-        if now - self.updateblocknum_tick > time::Duration::seconds(30) {
+        if now - self.updateblocknum_tick > chrono::Duration::seconds(30) {
             let block_num = self.getBlockNumber()?;
             self.lastblocknum = block_num;
-            self.updateblocknum_tick = time::now();
+            
+            self.updateblocknum_tick = chrono::Utc::now();
         }
 
         Ok(self.lastblocknum + DELTABLOCKLIMIT)
@@ -271,9 +273,11 @@ impl Bcos2Client {
         timeoutsec: i64,
         allow_none_result: bool,
     ) -> Result<JsonValue, KissError> {
-        let start = time::now();
+        // let start = time::now();
+        let start = chrono::Utc::now();
         //let h = "0xd47832f4de959582fc1964cea04da09506200c41a81e59c8934b23017deca27a";
-        while time::now() - start < chrono::Duration::seconds(timeoutsec) {
+        // while time::now() - start < chrono::Duration::seconds(timeoutsec) {
+        while chrono::Utc::now() - start < chrono::Duration::seconds(timeoutsec) {
             //println!("go get receipt");
             let v = self.getTransactionReceipt(txhash)?;
             //println!("result {:?}",v);
