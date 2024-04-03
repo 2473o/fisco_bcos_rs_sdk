@@ -74,10 +74,10 @@ pub fn load_key_from_pem(pemfile: &str) -> Result<Vec<u8>, KissError> {
     let pemres = pem::parse(key);
     match pemres {
         Ok(pem) => {
-            let privkey = try_from_fisco_pem_format(pem.contents().clone());
+            let privkey = try_from_fisco_pem_format(pem.contents().to_vec());
             match privkey {
                 Some(v) => Ok(v),
-                None => Ok(pem.contents()),
+                None => Ok(pem.contents().to_vec()),
             }
         }
         Err(e) => {
