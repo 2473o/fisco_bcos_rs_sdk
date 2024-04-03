@@ -60,10 +60,11 @@ impl BcosAccount {
 
 ///将私钥存入pem文件,无密码
 pub fn save_key_to_pem(key: &Vec<u8>, pemfile: &str) -> Result<(), KissError> {
-    let content = Pem {
-        tag: String::from("PRIVATE KEY"),
-        contents: key.clone(),
-    };
+    // let content = Pem {
+    //     tag: String::from("PRIVATE KEY"),
+    //     contents: key.clone(),
+    // };
+    let content = Pem::new(String::from("PRIVATE KEY"), key.clone());
     fileutils::write_all(pemfile, pem::encode(&content).into())
 }
 
@@ -73,10 +74,10 @@ pub fn load_key_from_pem(pemfile: &str) -> Result<Vec<u8>, KissError> {
     let pemres = pem::parse(key);
     match pemres {
         Ok(pem) => {
-            let privkey = try_from_fisco_pem_format(pem.contents.clone());
+            let privkey = try_from_fisco_pem_format(pem.contents().clone());
             match privkey {
                 Some(v) => Ok(v),
-                None => Ok(pem.contents),
+                None => Ok(pem.contents()),
             }
         }
         Err(e) => {

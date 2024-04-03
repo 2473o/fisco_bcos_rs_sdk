@@ -41,37 +41,6 @@ use serde_json::{json, Value as JsonValue};
 use chrono::{DateTime, Datelike, Timelike, Utc};
 // use time::Tm;
 
-// pub struct Tm {
-//     pub tm_sec: i32,
-//     pub tm_min: i32,
-//     pub tm_hour: i32,
-//     pub tm_mday: i32,
-//     pub tm_mon: i32,
-//     pub tm_year: i32,
-//     pub tm_wday: i32,
-//     pub tm_yday: i32,
-//     pub tm_isdst: i32,
-//     pub tm_utcoff: i32,
-//     pub tm_nsec: i32,
-// }
-
-// impl From<DateTime<Utc>> for Tm {
-//     fn from(dt: DateTime<Utc>) -> Self {
-//         Tm {
-//             tm_sec: dt.second() as i32,
-//             tm_min: dt.minute() as i32,
-//             tm_hour: dt.hour() as i32,
-//             tm_mday: dt.day() as i32,
-//             tm_mon: dt.month0() as i32,
-//             tm_year: dt.year() as i32 - 1900,
-//             tm_wday: dt.weekday().num_days_from_sunday() as i32,
-//             tm_yday: dt.ordinal0() as i32,
-//             tm_isdst: 0, // Daylight Saving Time flag (not supported)
-//             tm_utcoff: 0, // UTC offset (not supported)
-//             tm_nsec: dt.timestamp_subsec_nanos() as i32,
-//         }
-//     }
-// }
 
 #[derive()]
 pub struct Bcos2Client {
