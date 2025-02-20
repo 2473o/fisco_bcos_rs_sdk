@@ -110,11 +110,15 @@ pub struct ChannelConfig {
     pub cacert: String,
     pub sdkcert: String,
     pub sdkkey: String,
-
+    #[cfg(feature = "gm")]
     pub gmcacert: String,
+    #[cfg(feature = "gm")]
     pub gmsdkcert: String,
+    #[cfg(feature = "gm")]
     pub gmsdkkey: String,
+    #[cfg(feature = "gm")]
     pub gmensdkcert: String,
+    #[cfg(feature = "gm")]
     pub gmensdkkey: String,
 }
 unsafe impl Send for ChannelConfig {}
@@ -130,10 +134,15 @@ impl ChannelConfig {
             cacert: "sdk/ca.crt".to_string(),
             sdkcert: "sdk/sdk.crt".to_string(),
             sdkkey: "sdk/sdk.key".to_string(),
+            #[cfg(feature = "gm")]
             gmcacert: "sdk/gmca.crt".to_string(),
+            #[cfg(feature = "gm")]
             gmsdkcert: "sdk/gmsdk.crt".to_string(),
+            #[cfg(feature = "gm")]
             gmsdkkey: "sdk/gmsdk.key".to_string(),
+            #[cfg(feature = "gm")]
             gmensdkcert: "sdk/gmensdk.crt".to_string(),
+            #[cfg(feature = "gm")]
             gmensdkkey: "sdk/gmensdk.key".to_string(),
             timeout: 10,
         }
@@ -147,6 +156,7 @@ pub struct CommonConfig {
     pub accountpem: String,
     pub contractpath: String,
     pub solc: String,   //solc编译器
+    #[cfg(feature = "gm")]
     pub solcgm: String, //solc国密版本编译器
 }
 unsafe impl Sync for CommonConfig {}
