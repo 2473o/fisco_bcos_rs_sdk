@@ -26,9 +26,7 @@ use crate::bcossdkutil::accountutil::{account_from_pem, BcosAccount};
 use crate::bcossdkutil::bcosclientconfig::BcosClientProtocol;
 use crate::bcossdkutil::bcosclientconfig::{BcosCryptoKind, ClientConfig};
 use crate::bcossdkutil::commonhash::{CommonHash, HashType};
-use crate::bcossdkutil::commonsigner::{
-    CommonSignerWeDPR_SM2, CommonSignerWeDPR_Secp256, ICommonSigner,
-};
+use crate::bcossdkutil::commonsigner::{CommonSignerWeDPR_Secp256, ICommonSigner};
 use crate::bcossdkutil::contractabi::ContractABI;
 use crate::bcossdkutil::fileutils;
 use crate::bcossdkutil::kisserror::{KissErrKind, KissError};
@@ -38,9 +36,11 @@ use ethabi::Token;
 use ethereum_types::U256;
 use serde_json::{json, Value as JsonValue};
 
+#[cfg(feature = "gm")]
+use crate::bcossdkutil::commonsigner::CommonSignerWeDPR_SM2;
+
 use chrono::{DateTime, Datelike, Timelike, Utc};
 // use time::Tm;
-
 
 #[derive()]
 pub struct Bcos2Client {

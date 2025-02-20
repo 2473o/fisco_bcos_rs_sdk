@@ -107,6 +107,7 @@ impl Bcos3Client {
                 BcosCryptoKind::ECDSA => {
                     cryptotype = 0;
                 }
+                #[cfg(feature = "gm")]
                 BcosCryptoKind::GM => {
                     cryptotype = 1;
                 }
@@ -117,14 +118,14 @@ impl Bcos3Client {
             let client = Bcos3Client {
                 clientname: "BCOS3".to_string(),
                 crytotype: cryptotype,
-                hashtype: hashtype,
-                sdk: sdk,
+                hashtype,
+                sdk,
                 group: config.bcos3.group.clone(),
                 chainid: "chain0".to_string(),
-                config: config,
-                bcos3sdkini: bcos3sdkini,
-                keypair: keypair,
-                account: account,
+                config,
+                bcos3sdkini,
+                keypair,
+                account,
                 node: "".to_string(),
                 reqcounter: AtomicU64::new(0),
                 lastblocklimit: 0,

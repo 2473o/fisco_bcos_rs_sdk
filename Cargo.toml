@@ -1,5 +1,5 @@
 [package]
-name = "fisco-bcos-rust-gears-sdk"
+name = "rust-gears-sdk"
 version = "0.3.141"
 edition = "2018"
 authors = ["kentzhang <YOUKNOWTHAT@vip.qq.com>"]
@@ -14,7 +14,7 @@ path = "src/lib.rs"
 
 [dependencies]
 #rustc-hex="1.0.0"
-reqwest = { version = "0.12.2", features = ["json","blocking"] }
+reqwest = { version = "0.12.2", features = ["json", "blocking"] }
 serde = { version = "1.0", features = ["derive"] }
 serde_derive = "1.0"
 serde_json = "1.0"
@@ -46,26 +46,26 @@ keccak-hash = "0.11.0"
 serde_repr = "0.1.7"
 toml = "0.8.12"
 libloading = "0.8.3"
-libc="0.2.98"
+libc = "0.2.98"
 pem = "3.0.3"
-chrono="0.4"
-time="0.3.34"
+chrono = "0.4"
+time = "0.3.34"
 openssl = "0.10"
 anyhow = "1"
 log = "0.4"
 log4rs = "1.0.0"
 tokio = { version = "1", features = ["full"] }
 bytes = "1"
-colored ="3.0.0"
-encoding="*"
-rust-ini = {version ="*",features = ["inline-comment"] }
+colored = "3.0.0"
+encoding = "*"
+rust-ini = { version = "*", features = ["inline-comment"] }
 pkcs8 = "0.10"
 asn1 = "0.20"
 
 
 [dev-dependencies]
 paste = "1"
-primitive_types07 = { package = "primitive-types", version = "0.13"}
+primitive_types07 = { package = "primitive-types", version = "0.13" }
 
 
 [features]
@@ -74,8 +74,8 @@ default = []
 #default = ["bcos2sdk_ffi"]
 # default = ["bcos3sdk_ffi"]
 tassl_sock_ffi = []
-gm=[]
-bcos2sdk_ffi =[]
+gm = []
+bcos2sdk_ffi = []
 bcos3sdk_ffi = []
 bcos3sdk_native = []
 libtestcallback = []

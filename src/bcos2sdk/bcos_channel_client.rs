@@ -10,6 +10,7 @@
     unused_assignments
 )]
 
+#[cfg(feature = "gm")]
 use crate::bcos2sdk::bcos_ssl_native::BcosNativeTlsClient;
 use crate::bcos2sdk::bcos_ssl_normal::BcosSSLClient;
 use crate::bcos2sdk::channelpack::{make_channel_pack, ChannelPack, CHANNEL_PACK_TYPE};
