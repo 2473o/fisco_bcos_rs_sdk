@@ -372,6 +372,7 @@ impl BcosNativeTlsClient {
                         rzero(&"".to_string()).as_ptr(),
                     );
                 }
+                #[cfg(feature = "gm")]
                 BcosCryptoKind::GM => {
                     r = func_init(
                         mac_pssock!(self),

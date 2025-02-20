@@ -82,6 +82,7 @@ impl CommonHash {
                 //一定要先设置hash算法，这是基础中的基础
                 return HashType::WEDPR_KECCAK;
             }
+            #[cfg(feature = "gm")]
             BcosCryptoKind::GM => {
                 //一定要先设置hash算法，这是基础中的基础
                 return HashType::WEDRP_SM3;

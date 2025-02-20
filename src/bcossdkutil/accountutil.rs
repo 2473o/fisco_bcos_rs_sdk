@@ -227,6 +227,7 @@ impl IBcosAccountUtil for GMAccountUtil {
 pub fn create_account(cryptokind: &BcosCryptoKind) -> BcosAccount {
     match cryptokind {
         BcosCryptoKind::ECDSA => EcdsaAccountUtil::default().create_random(),
+        #[cfg(feature = "gm")]
         BcosCryptoKind::GM => GMAccountUtil::default().create_random(),
     }
 }
@@ -240,6 +241,7 @@ pub fn account_from_pem(
             let accountutil = EcdsaAccountUtil::default();
             accountutil.from_pem(pemfile)
         }
+        #[cfg(feature = "gm")]
         BcosCryptoKind::GM => {
             let accountutil = GMAccountUtil::default();
             accountutil.from_pem(pemfile)
@@ -256,6 +258,7 @@ pub fn account_from_privkey(
             let accountutil = EcdsaAccountUtil::default();
             accountutil.from_privkey_bytes(keybytes)
         }
+        #[cfg(feature = "gm")]
         BcosCryptoKind::GM => {
             let accountutil = GMAccountUtil::default();
             accountutil.from_privkey_bytes(keybytes)

@@ -48,6 +48,7 @@ pub struct Bcos2Client {
     pub account: BcosAccount,
     pub netclient: BcosRPC,
     pub ecdsasigner: Option<CommonSignerWeDPR_Secp256>,
+    #[cfg(feature = "gm")]
     pub gmsigner: Option<CommonSignerWeDPR_SM2>,
     //重要：当前sdk实例采用的hash算法，如keccak,国密等，当前客户端的编解码，签名都必须基于相同的hash算法
     //主要牵涉： account生成和加载，transaction签名，abi编解码
@@ -93,6 +94,7 @@ impl Bcos2Client {
         let hashtype = CommonHash::crypto_to_hashtype(&config.common.crypto);
 
         let mut ecdsasigner = Option::None;
+        #[cfg(feature = "gm")]
         let mut gmsigner = Option::None;
         let account = account_from_pem(config.common.accountpem.as_str(), &config.common.crypto)?;
         //printlnex!("done account");
@@ -102,6 +104,7 @@ impl Bcos2Client {
                 signer.account = account.clone();
                 ecdsasigner = Option::from(signer);
             }
+            #[cfg(feature = "gm")]
             BcosCryptoKind::GM => {
                 let mut signer = CommonSignerWeDPR_SM2::default();
                 signer.account = account.clone();
@@ -115,6 +118,7 @@ impl Bcos2Client {
             config,
             account,
             netclient,
+            #[cfg(feature = "gm")]
             gmsigner: gmsigner.clone(),
             ecdsasigner: ecdsasigner.clone(),
             hashtype: hashtype.clone(),
@@ -277,6 +281,7 @@ impl Bcos2Client {
                 printlnex!("pick signer {:?}", signer.account.to_hexdetail());
                 signer
             }
+            #[cfg(feature = "gm")]
             BcosCryptoKind::GM => {
                 let signer = self.gmsigner.as_ref().unwrap();
                 printlnex!("pick signer {:?}", signer.account.to_hexdetail());

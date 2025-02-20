@@ -27,6 +27,7 @@ use crate::bcossdkutil::kisserror::{KissErrKind, KissError};
 
 #[derive(Deserialize, Debug, Clone, Eq, PartialEq)]
 pub enum BcosCryptoKind {
+    #[cfg(feature = "gm")]
     GM,
     ECDSA,
 }
@@ -154,6 +155,7 @@ unsafe impl Send for CommonConfig {}
 #[derive(Deserialize, Debug, Clone)]
 pub struct ClientConfig {
     pub common: CommonConfig,
+    #[cfg(feature = "bcos3sdk_ffi")]
     pub bcos3: Bcos3Config,
     pub bcos2: Bcos2ChainConfig,
     pub rpc: RpcConfig,

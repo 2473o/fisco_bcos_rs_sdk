@@ -11,5 +11,6 @@
 )]
 
 pub mod bcos2sdk;
+#[cfg(feature = "bcos3sdk_ffi")]
 pub mod bcos3sdk;
 pub mod bcossdkutil;

@@ -12,6 +12,7 @@ pub fn sol_compile(contract_name: &str, configfile: &str) -> Result<Output, Kiss
     let config = ClientConfig::load(configfile)?;
     let mut solc_path = match config.common.crypto {
         BcosCryptoKind::ECDSA => config.common.solc,
+        #[cfg(feature = "gm")]
         BcosCryptoKind::GM => config.common.solcgm,
     };
     if cfg!(target_os = "windows") {

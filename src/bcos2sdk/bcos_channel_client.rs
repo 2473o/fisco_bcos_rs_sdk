@@ -87,6 +87,7 @@ impl BcosChannelClient {
                 channelimpl = Arc::new(Mutex::new(ssl_client))
                 //channelimpl = Arc::new(ssl_client)
             }
+            #[cfg(feature = "gm")]
             BcosCryptoKind::GM => {
                 let mut tls_client = BcosNativeTlsClient::default(&config);
                 tls_client.build()?;
