@@ -110,14 +110,24 @@ pub struct ChannelConfig {
     pub cacert: String,
     pub sdkcert: String,
     pub sdkkey: String,
+
+    #[cfg_attr(not(feature = "gm"), serde(default))]
     #[cfg(feature = "gm")]
     pub gmcacert: String,
+
+    #[cfg_attr(not(feature = "gm"), serde(default))]
     #[cfg(feature = "gm")]
     pub gmsdkcert: String,
+
+    #[cfg_attr(not(feature = "gm"), serde(default))]
     #[cfg(feature = "gm")]
     pub gmsdkkey: String,
+
+    #[cfg_attr(not(feature = "gm"), serde(default))]
     #[cfg(feature = "gm")]
     pub gmensdkcert: String,
+
+    #[cfg_attr(not(feature = "gm"), serde(default))]
     #[cfg(feature = "gm")]
     pub gmensdkkey: String,
 }
@@ -156,6 +166,8 @@ pub struct CommonConfig {
     pub accountpem: String,
     pub contractpath: String,
     pub solc: String,   //solc编译器
+
+    #[cfg_attr(not(feature = "gm"), serde(default))]
     #[cfg(feature = "gm")]
     pub solcgm: String, //solc国密版本编译器
 }
