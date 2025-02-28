@@ -1,3 +1,5 @@
+use rust_gears_sdk::bcossdkutil::bufferqueue::BufferQueue;
+
 
 pub fn test_queue() {
     let mut queue = BufferQueue::new();

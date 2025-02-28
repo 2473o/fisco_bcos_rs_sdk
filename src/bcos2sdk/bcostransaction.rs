@@ -23,7 +23,7 @@ use std::str::FromStr;
 use ethereum_types::{Address, H256, H512, U256};
 use rlp::{self, DecoderError, Rlp, RlpStream};
 
-use crate::bcossdkutil::accountutil::{EcdsaAccountUtil, IBcosAccountUtil};
+
 use crate::bcossdkutil::commonhash::{CommonHash, HashType};
 use crate::bcossdkutil::commonsigner::{CommonSignature, CommonSignerWeDPR_Secp256, ICommonSigner};
 use crate::bcossdkutil::kisserror::KissError;

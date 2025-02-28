@@ -1,3 +1,5 @@
+use rust_gears_sdk::bcos2sdk::channelpack::ChannelPack;
+
 pub fn test_channelpack() {
     let mut pack = ChannelPack::default();
     let data = "1234567890";

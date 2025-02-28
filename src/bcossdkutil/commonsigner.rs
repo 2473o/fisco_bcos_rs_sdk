@@ -25,7 +25,7 @@ use std::convert::From;
 use lazy_static::lazy_static;
 use wedpr_l_crypto_signature_secp256k1::WedprSecp256k1Recover;
 use wedpr_l_crypto_signature_sm2::WedprSm2p256v1;
-use wedpr_l_libsm::sm2::signature::Signature as WEDPRSM2Signature;
+
 use wedpr_l_utils::traits::Signature;
 
 use crate::bcossdkutil::accountutil::{BcosAccount, EcdsaAccountUtil, IBcosAccountUtil};

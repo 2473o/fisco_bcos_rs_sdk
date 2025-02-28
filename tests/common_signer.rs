@@ -1,12 +1,17 @@
+use rust_gears_sdk::bcossdkutil::commonsigner::{
+    CommonSignature, CommonSignerWeDPR_SM2, CommonSignerWeDPR_Secp256, ICommonSigner,
+    Secp256Signature,
+};
+use wedpr_l_libsm::sm2::signature::Signature as WEDPRSM2Signature;
 
-static demokeyhex: &str = "82dcd33c98a23d5d06f9331554e14ab4044a1d71b169b7a38b61c214f0690f80";
+static DEMO_KEY_HEX: &str = "82dcd33c98a23d5d06f9331554e14ab4044a1d71b169b7a38b61c214f0690f80";
 
 pub fn test_common_sign() {
     //let mut ecdsasigner: CommonSignerSecp256 = CommonSignerSecp256::default();
     let mut wedprsigner: CommonSignerWeDPR_Secp256 = CommonSignerWeDPR_Secp256::default();
     let data = keccak_hash::keccak(Vec::from("abcdefg"));
-    // ecdsasigner.from_hex_key(demokeyhex);
-    wedprsigner.key_from_hexstr(demokeyhex);
+    // ecdsasigner.from_hex_key(DEMO_KEY_HEX);
+    wedprsigner.key_from_hexstr(DEMO_KEY_HEX);
 
     // let mut signer: &dyn ICommonSigner = &ecdsasigner;
     // let s1 = signer.sign(Vec::from(data.as_bytes())).unwrap();
@@ -24,13 +29,13 @@ pub fn test_common_sign() {
     );
     let sp = Secp256Signature::to_electrum(&s2.to_vec());
     /*
-     let sig = ParityEcdsaSignature::from_electrum(sp.as_slice());
-     let recoverresult = publickey::recover(&sig, &data).unwrap();
-     println!(
-     "recover by ecdsa ,pubkey len {}, {:?}",
-     recoverresult.as_bytes().len(),
-     recoverresult.as_bytes()
-     );*/
+    let sig = ParityEcdsaSignature::from_electrum(sp.as_slice());
+    let recoverresult = publickey::recover(&sig, &data).unwrap();
+    println!(
+    "recover by ecdsa ,pubkey len {}, {:?}",
+    recoverresult.as_bytes().len(),
+    recoverresult.as_bytes()
+    );*/
 
     let s = CommonSignature::from_vec(&s2.to_vec());
 
@@ -39,7 +44,7 @@ pub fn test_common_sign() {
 
 pub fn test_gm_sign() {
     let mut sm2signer = CommonSignerWeDPR_SM2::default();
-    sm2signer.key_from_hexstr(demokeyhex);
+    sm2signer.key_from_hexstr(DEMO_KEY_HEX);
 
     let signer: &dyn ICommonSigner = &sm2signer;
     let data = "1234567890";

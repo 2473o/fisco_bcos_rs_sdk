@@ -1,3 +1,5 @@
+use rust_gears_sdk::bcossdkutil::bcosclientconfig::ClientConfig;
+
 
 //------------------------------------------------------------------------
 pub fn test_config() {

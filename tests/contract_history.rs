@@ -1,3 +1,8 @@
+use std::collections::HashMap;
+
+use rust_gears_sdk::bcossdkutil::contracthistory::ContractHistory;
+use serde::{Deserialize, Serialize};
+
 
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 struct GroupData {

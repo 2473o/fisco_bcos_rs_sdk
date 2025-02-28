@@ -1,3 +1,5 @@
+use rust_gears_sdk::bcossdkutil::accountutil::{load_key_from_pem, save_key_to_pem, EcdsaAccountUtil, IBcosAccountUtil};
+
 
 //测试代码开始--------------------------------------------
 pub fn test_account() {
@@ -8,7 +10,7 @@ pub fn test_account() {
     let account = accountresult.unwrap();
     println!("account : {:?}", account);
     let pemfile = "sdk/test.pem";
-    let res = save_key_to_pem(&account.privkey, pemfile);
+    let _ = save_key_to_pem(&account.privkey, pemfile);
     let loadres = load_key_from_pem(pemfile);
     let accountload = EcdsaAccountUtil::default().from_privkey_bytes(&loadres.unwrap());
     println!("load result {:?}", accountload);

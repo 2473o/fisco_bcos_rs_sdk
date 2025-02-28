@@ -1,5 +1,8 @@
-
-//----------------------------------------------------------------------------------------------
+use failure::AsFail;
+use rust_gears_sdk::{
+    bcossdkutil::kisserror::{KissErrKind, KissError},
+    kisserr,
+};
 
 pub fn test_fire_error(i: u32) -> Result<String, KissError> {
     if i > 10 {
@@ -18,7 +21,7 @@ pub fn test_bcos_error() {
             println!("{:?}", v);
         }
         Err(e) => {
-            println!("{:?}", e.kind.cause());
+            println!("{:?}", e.kind.as_fail().cause());
             println!("{:?}", e);
         }
     }
