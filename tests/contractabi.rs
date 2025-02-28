@@ -1,3 +1,5 @@
+use rust_gears_sdk::bcossdkutil::commonhash::HashType;
+
 
 pub fn test_parse_log() {
     let abi_path = "contracts/HelloWorld.abi";
