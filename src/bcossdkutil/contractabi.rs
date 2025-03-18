@@ -37,7 +37,6 @@ use ethabi::{
     Log as ReceiptLog, Param, RawLog,
 };
 use hex::ToHex;
-use hex_literal::hex;
 use keccak_hash::keccak;
 use serde_json::Value as JsonValue;
 

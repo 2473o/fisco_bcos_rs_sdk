@@ -18,7 +18,7 @@
     unused_variables,
     unused_assignments
 )]
-use failure::{AsFail, Fail};
+use thiserror::Error;
 
 #[macro_export]
 macro_rules! kisserr {
@@ -43,29 +43,29 @@ macro_rules! kisserrcode {
 }
 
 //Kiss: Keep It Simple & Stupid
-#[derive(Fail, Clone, Debug, Eq, PartialEq)]
+#[derive(Error, Clone, Debug, Eq, PartialEq)]
 pub enum KissErrKind {
-    #[fail(display = "error")]
+    #[error("error")]
     Error,
-    #[fail(display = "Argument is invalid")]
+    #[error("Argument is invalid")]
     EArgument,
-    #[fail(display = "Data format error")]
+    #[error("Data format error")]
     EFormat,
-    #[fail(display = "net work error")]
+    #[error("net work error")]
     ENetwork,
-    #[fail(display = "timeout")]
+    #[error("timeout")]
     ETimeout,
-    #[fail(display = "sign fail")]
+    #[error("sign fail")]
     ESign,
-    #[fail(display = "try again")]
+    #[error("try again")]
     EAgain,
-    #[fail(display = "file not exist")]
+    #[error("file not exist")]
     EFileMiss,
-    #[fail(display = "file open")]
+    #[error("file open")]
     EFileOpen,
-    #[fail(display = "file write")]
+    #[error("file write")]
     EFileWrite,
-    #[fail(display = "file read")]
+    #[error("file read")]
     EFileRead,
 }
 

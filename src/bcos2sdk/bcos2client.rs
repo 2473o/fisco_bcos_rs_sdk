@@ -153,14 +153,14 @@ impl Bcos2Client {
         Ok(value)
     }
     //-----------------------------------------------------------------------------------
-    ///部署合约，输入合约的bin文件，以及构造函数所需的参数，将构造函数参数后附在最后。部署完成后返回Json或错误信息
-    ///参数用contractABI的构造函数encode_constructor_input构建
+    /// 部署合约，输入合约的bin文件，以及构造函数所需的参数，将构造函数参数后附在最后。部署完成后返回Json或错误信息
+    /// 参数用contractABI的构造函数encode_constructor_input构建
     pub fn deploy_file(&mut self, binfile: &str, params: &str) -> Result<JsonValue, KissError> {
         let hexcode = fileutils::readstring(binfile)?;
         let codewithparam = format!("{}{}", hexcode, params); //追加参数
         self.deploy_hexcode(codewithparam.as_str())
     }
-    //传入已经加载的二进制合约代码，合约名，字符串数组类型的参数，部署合约
+    //传入已经加载的二进制合约代码（.bin code），合约名，字符串数组类型的参数，部署合约
     pub fn deploy_code_withparam(
         &mut self,
         hexcode: &str,

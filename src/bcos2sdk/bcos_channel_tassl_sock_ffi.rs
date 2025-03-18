@@ -39,7 +39,9 @@ pub fn getNodeVersionPack() -> Option<ChannelPack> {
 }
 
 #[cfg(feature = "libtestcallback")]
-extern "C" fn fn_callback(buffer: *mut c_char, buffersize: c_int) -> c_int {
+pub extern "C"  fn fn_callback(buffer: *mut c_char, buffersize: c_int) -> c_int {
+    use std::ffi::CStr;
+
     println!("IN CALLBACK {}", buffersize);
     println!("IN CALLBACK {:?}", buffer);
     unsafe {
