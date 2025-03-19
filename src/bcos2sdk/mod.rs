@@ -21,8 +21,12 @@ pub mod bcos_ssl_normal;
 pub mod bcossdkgroup;
 pub mod bcostransaction;
 
+#[cfg(feature = "bcos2sdk_ffi")]
 pub mod bcos2_ssl_ffi;
+
 pub mod bcos_channel_handler_manager;
+#[cfg(feature="tassl_sock_ffi")]
 pub mod bcos_channel_tassl_sock_ffi;
+
 pub mod channelpack;
 pub mod eventhandler;

@@ -3,6 +3,7 @@ use std::thread;
 use rust_gears_sdk::{bcos2sdk::{bcos_channel_client::IBcosChannel, bcos_ssl_native::{getNodeVersionPack, BcosNativeTlsClient}, channelpack::ChannelPack}, bcossdkutil::bcosclientconfig::ClientConfig};
 use std::time::Duration;
 
+#[test]
 pub fn test_ssl_native() {
     let config = ClientConfig::load("gm/conf/config.toml").unwrap();
     let mut client = BcosNativeTlsClient::default(&config.channel);

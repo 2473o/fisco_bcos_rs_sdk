@@ -9,6 +9,7 @@ struct GroupData {
     pub name: HashMap<String, HashMap<String, String>>,
 }
 
+#[test]
 pub fn test_multi() {
     //let mut gd:HashMap<String,HashMap<String,String>> = HashMap::new();
     let mut gd = GroupData {
@@ -41,6 +42,7 @@ pub fn test_multi() {
     println!("after change {}", toml::to_string_pretty(&v).unwrap());
 }
 
+#[test]
 pub fn test_toml() {
     //return test_multi();
 

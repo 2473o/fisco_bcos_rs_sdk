@@ -1,7 +1,7 @@
-use rust_gears_sdk::bcossdkutil::{commonhash::HashType, contractabi::ContractABI};
 use hex_literal::hex;
+use rust_gears_sdk::bcossdkutil::{commonhash::HashType, contractabi::ContractABI};
 
-pub fn test_parse_log() {
+fn test_parse_log() {
     let abi_path = "contracts/HelloWorld.abi";
     let contract_result = ContractABI::new(abi_path, &HashType::WEDPR_KECCAK);
     let logdata = "000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000103132333437383930616263656667686500000000000000000000000000000000";
@@ -43,29 +43,7 @@ pub fn test_parse_log() {
     }
 }
 
-pub fn test_contract() {
-    let abi_path = "contracts/HelloWorld.abi";
-    let contract = ContractABI::new(abi_path, &HashType::WEDPR_KECCAK);
-    match &contract {
-        Ok(c) => {
-            println!("contract is {:?}", c);
-        }
-        Err(e) => {
-            println!("{:?}", e);
-            return;
-        }
-    }
-    let params: [String; 1] = [String::from("12347890abc")];
-    let hellores = contract
-        .unwrap()
-        .encode_function_input_to_abi("set", &params, false)
-        .ok();
-    println!("contract  set rawdata :{}", hellores.unwrap().as_str());
-    test_parse_log();
-    test_parse_tx_input();
-}
-
-pub fn test_parse_tx_input() {
+fn test_parse_tx_input() {
     let txinput = "4ed3885e000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000103132333437383930616263656667686500000000000000000000000000000000";
     let abi_path = "contracts/HelloWorld.abi";
     let contract = ContractABI::new(abi_path, &HashType::WEDPR_KECCAK);
@@ -86,4 +64,27 @@ pub fn test_parse_tx_input() {
             println!("not found func {:?}", e);
         }
     }
+}
+
+#[test]
+pub fn test_contract() {
+    let abi_path = "contracts/HelloWorld.abi";
+    let contract = ContractABI::new(abi_path, &HashType::WEDPR_KECCAK);
+    match &contract {
+        Ok(c) => {
+            println!("contract is {:?}", c);
+        }
+        Err(e) => {
+            println!("{:?}", e);
+            return;
+        }
+    }
+    let params: [String; 1] = [String::from("12347890abc")];
+    let hellores = contract
+        .unwrap()
+        .encode_function_input_to_abi("set", &params, false)
+        .ok();
+    println!("contract  set rawdata :{}", hellores.unwrap().as_str());
+    test_parse_log();
+    test_parse_tx_input();
 }

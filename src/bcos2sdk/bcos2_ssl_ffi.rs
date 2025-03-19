@@ -1,8 +1,7 @@
-#[cfg(feature = "bcos2sdk_ffi")]
+
 use libc::{c_char, c_int, c_void};
 
 //ffi方式链接native_tassl_sock_wrap库且映射C API
-#[cfg(feature = "bcos2sdk_ffi")]
 #[link(name = "native_tassl_sock_wrap")]
 extern "C" {
     pub fn ssock_create() -> *const c_void;

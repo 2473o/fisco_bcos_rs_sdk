@@ -1,6 +1,6 @@
 use rust_gears_sdk::bcossdkutil::bufferqueue::BufferQueue;
 
-
+#[test]
 pub fn test_queue() {
     let mut queue = BufferQueue::new();
     let mut v: Vec<u8> = [1, 2, 3, 4, 5].to_vec();

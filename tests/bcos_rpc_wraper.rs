@@ -3,6 +3,7 @@ use serde_json::json;
 
 
 //----------------------------------------------------------------------
+#[test]
 pub fn test_json_rpc() {
     let groupid = 1;
     let config = ClientConfig::load("conf/client_config.toml").unwrap();

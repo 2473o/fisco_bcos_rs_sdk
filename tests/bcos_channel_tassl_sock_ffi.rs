@@ -13,9 +13,10 @@ pub fn test_callback() {
     }
 }
 
+#[cfg(feature = "tassl_sock_ffi")]
+#[test]
 pub fn test_ssock() {
     println!("test ssock ffi");
-    #[cfg(feature = "bcos2sdk_ffi")]
     unsafe {
         /* let cafile = CString::new("gm/sdk/gmca.crt").unwrap();
         let sdkcrt = CString::new("gm/sdk/gmsdk.crt").unwrap();

@@ -1,20 +1,18 @@
-#[cfg(feature = "bcos2sdk_ffi")]
+
 use crate::bcos2sdk::bcos2_ssl_ffi::*;
-#[cfg(feature = "bcos2sdk_ffi")]
+
 use crate::bcos2sdk::bcosrpcwraper::RpcRequestData;
-#[cfg(feature = "bcos2sdk_ffi")]
+
 use crate::bcos2sdk::channelpack::{make_channel_pack, ChannelPack, CHANNEL_PACK_TYPE};
-#[cfg(feature = "bcos2sdk_ffi")]
+
 use crate::str2p;
-#[cfg(feature = "bcos2sdk_ffi")]
+
 use libc::{c_char, c_int};
-#[cfg(feature = "bcos2sdk_ffi")]
+
 use serde_json::json;
-#[cfg(feature = "bcos2sdk_ffi")]
+
 use std::ffi::CString;
-#[cfg(feature = "bcos2sdk_ffi")]
 use std::thread;
-#[cfg(feature = "bcos2sdk_ffi")]
 use std::time::Duration;
 
 //use std::ffi::CStr;
@@ -22,7 +20,7 @@ use std::time::Duration;
 //ffi 模式的调用，需要native_ssock_wrap.lib文件
 //打开tassl_sock_ffi特性，需要用这个语句编译：cargo build --features  "tassl_sock_ffi"
 
-#[cfg(feature = "bcos2sdk_ffi")]
+
 pub fn getNodeVersionPack() -> Option<ChannelPack> {
     let groupid = 1;
     let cmd = "getClientVersion";

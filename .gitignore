@@ -28,4 +28,3 @@ log/
 gm/
 *.log
 *.abi
-*.toml

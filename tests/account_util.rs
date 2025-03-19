@@ -2,6 +2,7 @@ use rust_gears_sdk::bcossdkutil::accountutil::{load_key_from_pem, save_key_to_pe
 
 
 //测试代码开始--------------------------------------------
+#[test]
 pub fn test_account() {
     let fixkey = "82dcd33c98a23d5d06f9331554e14ab4044a1d71b169b7a38b61c214f0690f80";
     //let account = EcdsaAccount::creat_random();

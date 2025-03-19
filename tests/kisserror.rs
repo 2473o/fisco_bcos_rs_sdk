@@ -4,16 +4,19 @@ use rust_gears_sdk::{
     kisserr,
 };
 
-pub fn test_fire_error(i: u32) -> Result<String, KissError> {
+
+fn test_fire_error(i: u32) -> Result<String, KissError> {
     if i > 10 {
         Ok("ok done".to_string())
     } else {
         kisserr!(KissErrKind::ENetwork, "")
     }
 }
-pub fn test_enum_error() -> Result<String, KissErrKind> {
+fn test_enum_error() -> Result<String, KissErrKind> {
     Err(KissErrKind::EArgument)
 }
+
+#[test]
 pub fn test_bcos_error() {
     let r = test_fire_error(10);
     match r {

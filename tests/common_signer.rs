@@ -6,6 +6,7 @@ use wedpr_l_libsm::sm2::signature::Signature as WEDPRSM2Signature;
 
 static DEMO_KEY_HEX: &str = "82dcd33c98a23d5d06f9331554e14ab4044a1d71b169b7a38b61c214f0690f80";
 
+#[test]
 pub fn test_common_sign() {
     //let mut ecdsasigner: CommonSignerSecp256 = CommonSignerSecp256::default();
     let mut wedprsigner: CommonSignerWeDPR_Secp256 = CommonSignerWeDPR_Secp256::default();
@@ -42,6 +43,8 @@ pub fn test_common_sign() {
     println!("r={:?},s={:?},v={:?}", s.r, s.s, s.v);
 }
 
+#[cfg(feature="gm")]
+#[test]
 pub fn test_gm_sign() {
     let mut sm2signer = CommonSignerWeDPR_SM2::default();
     sm2signer.key_from_hexstr(DEMO_KEY_HEX);
