@@ -103,6 +103,8 @@ all = [
     "bcos2sdk_ffi",
     "tassl_sock_ffi",
 ]
+no_2sdk = [
+]
 
 [package.metadata.build]
 rustc-flags = [
