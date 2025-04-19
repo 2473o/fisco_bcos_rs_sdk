@@ -179,8 +179,11 @@ pub struct ClientConfig {
     pub common: CommonConfig,
     #[cfg(feature = "bcos3sdk_ffi")]
     pub bcos3: Bcos3Config,
+    #[cfg(not(feature="no_2sdk"))]
     pub bcos2: Bcos2ChainConfig,
+    #[cfg(not(feature="no_2sdk"))]
     pub rpc: RpcConfig,
+    #[cfg(not(feature="no_2sdk"))]
     pub channel: ChannelConfig,
     pub configfile: Option<String>,
 }

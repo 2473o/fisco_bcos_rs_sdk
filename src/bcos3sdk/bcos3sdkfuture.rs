@@ -44,12 +44,12 @@ impl Bcos3SDKFuture {
         let (tx, rx) = mpsc::channel();
 
         let future_context = Bcos3SDKFuture {
-            seq: seq,
+            seq,
             name: name.to_string(),
             desc: desc.to_string(),
             timeout: 5,
-            tx: tx,
-            rx: rx,
+            tx,
+            rx,
         };
         future_context
     }
