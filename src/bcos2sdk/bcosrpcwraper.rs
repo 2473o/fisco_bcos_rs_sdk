@@ -27,6 +27,8 @@ use crate::bcossdkutil::bcosclientconfig::{BcosClientProtocol, ClientConfig};
 use crate::bcossdkutil::kisserror::{KissErrKind, KissError};
 use crate::{kisserr, printlnex};
 
+use tracing as log;
+
 ///对应json rpc的request json格式
 #[derive(Debug, Default, Serialize, Deserialize)]
 pub struct RpcRequestData {
@@ -94,8 +96,8 @@ impl BcosRPC {
         }
         Ok(BcosRPC {
             config: config.clone(),
-            jsonrpc_client: jsonrpc_client,
-            channel_client: channel_client,
+            jsonrpc_client,
+            channel_client,
         })
     }
 
@@ -125,7 +127,7 @@ impl BcosRPC {
         cmd: &str,
         params_value: &JsonValue,
     ) -> Result<JsonValue, KissError> {
-        log::debug!("rpc_request_sync cmd {:?},{:?}", cmd, params_value);
+        log::debug!(target: "bcossdk","rpc_request_sync cmd {:?},{:?}", cmd, params_value);
         let req = RpcRequestData {
             method: cmd.to_string(),
             params: params_value.clone(),
@@ -133,9 +135,9 @@ impl BcosRPC {
         };
         let outbuffer = req.encode()?;
         printlnex!("request: {:?}", outbuffer);
-        log::info!("request: {:?}", outbuffer);
+        log::info!(target: "bcossdk", "request: {:?}", outbuffer);
         let responsebuffer = self.switch_rpc_request_sync(&outbuffer)?;
-        log::info!("response:  {:?}", &responsebuffer);
+        log::info!(target: "bcossdk", "response:  {:?}", &responsebuffer);
         let jsonres: JsonResult<JsonValue> = serde_json::from_str(responsebuffer.as_str());
         match jsonres {
             Ok(jsonval) => {
@@ -144,6 +146,7 @@ impl BcosRPC {
             }
             Err(e) => {
                 log::error!(
+                    target: "bcossdk",
                     "parse json rpc response json error {},{:?}",
                     responsebuffer,
                     e

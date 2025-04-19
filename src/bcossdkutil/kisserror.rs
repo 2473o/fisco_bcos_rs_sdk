@@ -85,7 +85,7 @@ pub struct KissError {
 impl KissError {
     pub fn err(kind: KissErrKind) -> KissError {
         KissError {
-            kind: kind,
+            kind,
             code: 0,
             msg: "".to_string(),
         }

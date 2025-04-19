@@ -10,21 +10,21 @@
     unused_results,
     unused_variables
 )]
+use colored::Colorize;
+use console::common::Cli;
 use console::console::bcos2_contract::Bcos2Contract;
 use console::console::bcos2_query::Bcos2Query;
 use console::console::bcos3_contracts::Bcos3Contract;
 use console::console::bcos3_query::Bcos3Query;
+use console::sample::{self, demo_bcos3event};
 use rust_gears_sdk::bcossdkutil::kisserror::{KissErrKind, KissError};
-use colored::Colorize;
-use console::common::Cli;
 use std::env::Args;
 use std::{env, thread};
-use console::sample::{self, demo_bcos3event};
 
-use log::info;
+// use log::info;
+use rust_gears_sdk::bcos2sdk::bcos2client::Bcos2Client;
 use rust_gears_sdk::bcos2sdk::bcos_channel_tassl_sock_ffi;
 use rust_gears_sdk::bcos2sdk::bcos_channel_threads_worker;
-use rust_gears_sdk::bcos2sdk::bcos2client::Bcos2Client;
 use rust_gears_sdk::bcos2sdk::eventhandler;
 use rust_gears_sdk::bcos2sdk::{bcos_ssl_native, bcossdkquery};
 use rust_gears_sdk::bcos3sdk::bcos3sdkwrapper;
@@ -35,6 +35,7 @@ use rust_gears_sdk::bcossdkutil::macrodef::set_debugprint;
 use rust_gears_sdk::{bcos2sdk, bcossdkutil};
 use std::time::Duration;
 use structopt::StructOpt;
+use tracing::info;
 
 #[tokio::main]
 pub async fn main() {

@@ -1,8 +1,6 @@
 use std::path::{Path, PathBuf};
 use std::process::{Command, Output};
 
-//use log::info;
-
 use crate::bcossdkutil::bcosclientconfig::{BcosCryptoKind, ClientConfig};
 use crate::bcossdkutil::kisserror::{KissErrKind, KissError};
 
