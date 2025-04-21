@@ -21,9 +21,8 @@
 extern crate libloading;
 
 use std::convert::From;
-use std::{env, thread};
+use std::env;
 use std::sync::{Arc, Mutex};
-use std::time::Duration;
 
 use libc::c_void;
 use libloading::{Library, Symbol};

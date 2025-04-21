@@ -81,7 +81,6 @@ hex-literal = { version = "1" }
 
 [features]
 default = [
-    "all",
 ]
 #default = ["bcos3sdk_ffi","bcos2sdk_ffi"]
 #default = ["bcos2sdk_ffi"]

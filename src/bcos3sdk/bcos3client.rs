@@ -5,24 +5,24 @@
 use std::ffi::{CStr, CString};
 use std::sync::atomic::{AtomicU64, Ordering};
 
-use encoding::{DecoderTrap, Encoding};
 use encoding::all::GBK;
+use encoding::{DecoderTrap, Encoding};
 use libc::{c_char, c_int, c_longlong, c_void};
 use serde_json::Value as JsonValue;
 // use time::{Duration, Tm};
 use chrono::{self, DateTime, Utc};
 
-use crate::{kisserr, kisserrcode, str2p};
 use crate::bcos3sdk::bcos3sdk_ini::Bcos3sdkIni;
 use crate::bcos3sdk::bcos3sdkfuture::Bcos3SDKFuture;
-use crate::bcos3sdk::bcos3sdkwrapper::*;
 use crate::bcos3sdk::bcos3sdkwrapper::bcos3sdk_def::*;
+use crate::bcos3sdk::bcos3sdkwrapper::*;
 use crate::bcossdkutil::accountutil::{account_from_pem, BcosAccount};
 use crate::bcossdkutil::bcosclientconfig::{BcosCryptoKind, ClientConfig};
 use crate::bcossdkutil::commonhash::{CommonHash, HashType};
 use crate::bcossdkutil::contractabi::ContractABI;
 use crate::bcossdkutil::fileutils;
 use crate::bcossdkutil::kisserror::{KissErrKind, KissError};
+use crate::{kisserr, kisserrcode, str2p};
 
 //定义一个结构体，简单包装sdk指针，有待扩展
 pub struct Bcos3Client {
@@ -46,6 +46,7 @@ impl Bcos3Client {
     pub fn get_full_name(&self) -> String {
         format!("{}-{}-{}", self.clientname, self.chainid, self.group)
     }
+
     pub fn getLastError() -> i32 {
         unsafe {
             let errcode = bcos_sdk_get_last_error();
@@ -53,11 +54,14 @@ impl Bcos3Client {
         }
     }
     pub fn get_info(&self) -> String {
-        let info = format!("chain:[{}],group:[{}],crypto:[{}],account:[0x{}],peers:[{:?}]\n{}",
-                           self.chainid, self.group, self.crytotype,
-                           hex::encode(&self.account.address),
-                           self.bcos3sdkini.peers,
-                           self.getVersion()
+        let info = format!(
+            "chain:[{}],group:[{}],crypto:[{}],account:[0x{}],peers:[{:?}]\n{}",
+            self.chainid,
+            self.group,
+            self.crytotype,
+            hex::encode(&self.account.address),
+            self.bcos3sdkini.peers,
+            self.getVersion()
         );
         return info;
     }
@@ -83,6 +87,7 @@ impl Bcos3Client {
                     }
                 }
             }
+            tracing::error!(target: "bcossdk", msgstr);
             return msgstr;
         }
     }
@@ -91,10 +96,19 @@ impl Bcos3Client {
             let config = ClientConfig::load(configfile).unwrap();
             let sdk = init_bcos3sdk_lib(config.bcos3.sdk_config_file.as_str());
             if sdk == 0 as *const c_void {
-                return kisserr!(KissErrKind::Error,"BCOS3 C LIB is NOT init;ERROR:{}:{}",bcos_sdk_get_last_error(),Bcos3Client::getLastErrMessage());
+                return kisserr!(
+                    KissErrKind::Error,
+                    "BCOS3 C LIB is NOT init;ERROR:{}:{}",
+                    bcos_sdk_get_last_error(),
+                    Bcos3Client::getLastErrMessage()
+                );
             }
             if bcos_sdk_get_last_error() != 0 {
-                return kisserr!(KissErrKind::Error,"BCOS3 C LIB init/start error {}",Bcos3Client::getLastErrMessage());
+                return kisserr!(
+                    KissErrKind::Error,
+                    "BCOS3 C LIB init/start error {}",
+                    Bcos3Client::getLastErrMessage()
+                );
             }
             let bcos3sdkini = Bcos3sdkIni::load(config.bcos3.sdk_config_file.as_str())?;
             let mut cryptotype = 0;
@@ -191,7 +205,9 @@ impl Bcos3Client {
         self.reqcounter.fetch_add(1, Ordering::Relaxed);
         unsafe {
             // if time::now() - self.lastblocklimittime < chrono::Duration::seconds(15) && self.lastblocklimit > 0 {
-            if chrono::Utc::now() - self.lastblocklimittime < chrono::Duration::seconds(15) && self.lastblocklimit > 0 {
+            if chrono::Utc::now() - self.lastblocklimittime < chrono::Duration::seconds(15)
+                && self.lastblocklimit > 0
+            {
                 //每15秒从节点更新一次blocklimit,避免频繁的更新，一般来说每秒出块绝不会超过n个，所以这个时间窗是ok的
                 return Ok(self.lastblocklimit);
             }
@@ -201,7 +217,11 @@ impl Bcos3Client {
                     //偶尔获取失败，且本地还有获取过的blocklimit，则返回本地的blocklimit，大概率是可以继续的，但不更新获取时间,下次调用会再尝试获取
                     return Ok(self.lastblocklimit);
                 }
-                return kisserr!(KissErrKind::Error,"get blocklimit from chain error,res : {}",new_blockLimit);
+                return kisserr!(
+                    KissErrKind::Error,
+                    "get blocklimit from chain error,res : {}",
+                    new_blockLimit
+                );
             }
             self.lastblocklimit = new_blockLimit as u64;
             // self.lastblocklimittime = time::now();
@@ -608,7 +628,7 @@ impl Bcos3Client {
             let p_signed_tx = Box::into_raw(Box::new(0 as *mut c_char));
             let blocklimit = self.getBlocklimit()?;
 
-            bcos_sdk_create_signed_transaction(
+            bcos_sdk_create_signed_transaction_ver_extra_data(
                 self.keypair,
                 str2p!(self.group.as_str()),
                 str2p!(self.chainid.as_str()),
@@ -617,11 +637,13 @@ impl Bcos3Client {
                 str2p!(""),
                 blocklimit as c_longlong,
                 0,
+                str2p!(""),
                 p_txhash,
                 p_signed_tx,
             );
-            let lasterr = Bcos3Client::getLastError();
-            if lasterr != 0 {
+            let lasterr = bcos_sdk_is_last_opr_success();
+            tracing::debug!(target: "bcossdk", "lasterr: {}", lasterr);
+            if lasterr == 0 {
                 let last_err_msg = Bcos3Client::getLastErrMessage();
                 return kisserrcode!(KissErrKind::Error, lasterr as i64, "{}", last_err_msg);
             }
