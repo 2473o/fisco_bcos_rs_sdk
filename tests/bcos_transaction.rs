@@ -1,4 +1,6 @@
+#[cfg(not(feature = "no_2sdk"))]
 use ethereum_types::{Address, H256, H512, U256};
+#[cfg(not(feature = "no_2sdk"))]
 use rust_gears_sdk::{
     bcos2sdk::bcostransaction::{encode_raw_transaction, BcosTransaction, BcosTransactionWithSig},
     bcossdkutil::{
@@ -6,13 +8,17 @@ use rust_gears_sdk::{
         commonhash::HashType,
     },
 };
+#[cfg(not(feature = "no_2sdk"))]
 use std::str::FromStr;
 
+#[cfg(not(feature = "no_2sdk"))]
 fn test_decode_tx_from_str(tx_data: &str) {
     let tx = BcosTransaction::decode_bytes(hex::decode(tx_data).unwrap().as_slice()).unwrap();
 }
 
 ///测试代码入口
+///
+#[cfg(not(feature = "no_2sdk"))]
 pub fn test_sign_tx() {
     let key = EcdsaAccountUtil::default().create_random();
     let set_input = "4ed3885e0000000000000000000000000000000000000000000000000000000000000020000000000000000000000000000000000000000000000000000000000000000b3132333437383930616263000000000000000000000000000000000000000000";
@@ -35,6 +41,7 @@ pub fn test_sign_tx() {
     println!("to address {:?}", hex::encode(tx.transaction.to_address));
 }
 
+#[cfg(not(feature = "no_2sdk"))]
 #[test]
 pub fn test_decode_tx() {
     //let datahex: &str = "f864808504a817c800825208943535353535353535353535353535353535353535808025a0044852b2a670ade5407e78fb2863c51de9fcb96542a07186fe3aeda6bb8a116da0044852b2a670ade5407e78fb2863c51de9fcb96542a07186fe3aeda6bb8a116d";

@@ -6,29 +6,41 @@ use wedpr_l_libsm::sm2::signature::Signature as WEDPRSM2Signature;
 
 static DEMO_KEY_HEX: &str = "82dcd33c98a23d5d06f9331554e14ab4044a1d71b169b7a38b61c214f0690f80";
 
+// FAILED
 #[test]
 pub fn test_common_sign() {
-    //let mut ecdsasigner: CommonSignerSecp256 = CommonSignerSecp256::default();
-    let mut wedprsigner: CommonSignerWeDPR_Secp256 = CommonSignerWeDPR_Secp256::default();
+    let mut wedprsigner = CommonSignerWeDPR_Secp256::default();
     let data = keccak_hash::keccak(Vec::from("abcdefg"));
-    // ecdsasigner.from_hex_key(DEMO_KEY_HEX);
     wedprsigner.key_from_hexstr(DEMO_KEY_HEX);
 
     // let mut signer: &dyn ICommonSigner = &ecdsasigner;
     // let s1 = signer.sign(Vec::from(data.as_bytes())).unwrap();
     let signer = &wedprsigner;
-    let s2 = signer.sign(Vec::from(data.as_bytes())).unwrap();
+
+    let s2 = match signer.sign(Vec::from(data.as_bytes())) {
+        Ok(s2) => s2,
+        Err(e) => panic!("{:?}", e),
+    };
+
+    println!("{:?}", s2.r.len());
+    println!("{:?}", s2.v.len());
+    println!("{:?}", s2.s.len());
+
     //wedpr转公钥使用了带压缩支持的算法，前面加04是为了标注这个公钥是没有压缩的，64字节的公钥，如果是压缩的33字节公钥前面会是03
-    let recover = wedprsigner
+    let recover = match wedprsigner
         .signer
         .recover_public_key(data.as_bytes(), s2.to_vec().as_slice())
-        .unwrap();
+    {
+        Ok(v) => v,
+        Err(e) => panic!("{:?}", e),
+    };
+
     println!(
         "recover by wedpr ,pubkey len{},{:?}",
         &recover.len(),
         &recover
     );
-    let sp = Secp256Signature::to_electrum(&s2.to_vec());
+    let _sp = Secp256Signature::to_electrum(&s2.to_vec());
     /*
     let sig = ParityEcdsaSignature::from_electrum(sp.as_slice());
     let recoverresult = publickey::recover(&sig, &data).unwrap();
@@ -43,7 +55,8 @@ pub fn test_common_sign() {
     println!("r={:?},s={:?},v={:?}", s.r, s.s, s.v);
 }
 
-#[cfg(feature="gm")]
+// FAILED
+#[cfg(feature = "gm")]
 #[test]
 pub fn test_gm_sign() {
     let mut sm2signer = CommonSignerWeDPR_SM2::default();
@@ -53,7 +66,7 @@ pub fn test_gm_sign() {
     let data = "1234567890";
     let signresult = signer.sign(data.as_bytes().to_vec());
     println!("GM Sign result = {:?}", &signresult);
-    let signresult1 = signer.sign(data.as_bytes().to_vec());
+    let _signresult1 = signer.sign(data.as_bytes().to_vec());
     let sig = signresult.unwrap();
     println!("account detail: {:?}", sm2signer.account.to_hexdetail());
     println!("GM Sign Hex = {:?}", hex::encode(&sig.to_vec().as_slice()));

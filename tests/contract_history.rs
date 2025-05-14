@@ -3,7 +3,6 @@ use std::collections::HashMap;
 use rust_gears_sdk::bcossdkutil::contracthistory::ContractHistory;
 use serde::{Deserialize, Serialize};
 
-
 #[derive(Serialize, Deserialize, Debug, Default, Clone)]
 struct GroupData {
     pub name: HashMap<String, HashMap<String, String>>,
@@ -53,7 +52,7 @@ pub fn test_toml() {
     println!("get by name {}", addr);
     ch.add("seg1", "a", "0xabcdefg", 0);
     ch.add("seg2", "HelloWorld1", "0xef1234567890", 99);
-    let res = ch.save(history_name);
+    let _res = ch.save(history_name);
 
     println!("getlast {:?}", ch.getlast("seg2", "HelloWorld"));
     println!(

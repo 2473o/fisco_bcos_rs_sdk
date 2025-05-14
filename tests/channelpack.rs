@@ -1,5 +1,7 @@
+#[cfg(not(feature = "no_2sdk"))]
 use rust_gears_sdk::bcos2sdk::channelpack::ChannelPack;
 
+#[cfg(not(feature = "no_2sdk"))]
 #[test]
 pub fn test_channelpack() {
     let mut pack = ChannelPack::default();

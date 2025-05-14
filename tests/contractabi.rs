@@ -4,9 +4,9 @@ use rust_gears_sdk::bcossdkutil::{commonhash::HashType, contractabi::ContractABI
 fn test_parse_log() {
     let abi_path = "contracts/HelloWorld.abi";
     let contract_result = ContractABI::new(abi_path, &HashType::WEDPR_KECCAK);
-    let logdata = "000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000103132333437383930616263656667686500000000000000000000000000000000";
+    let _logdata = "000000000000000000000000000000000000000000000000000000000000002000000000000000000000000000000000000000000000000000000000000000103132333437383930616263656667686500000000000000000000000000000000";
     let contract = contract_result.unwrap();
-    for (pos, e) in contract.contract.events.iter().enumerate() {
+    for (_pos, e) in contract.contract.events.iter().enumerate() {
         println!("event {:?}", e);
     }
     let onset_events = contract.contract.events_by_name("onset").unwrap();
@@ -27,7 +27,7 @@ fn test_parse_log() {
             "afb180742c1292ea5d67c4f6d51283ecb11e49f8389f4539bef82135d689e118",
         ));
         match ebyhash {
-            Some(event) => {
+            Some(_event) => {
                 let result = e.parse_log(rawlog.clone());
                 let log = result.ok().unwrap();
                 println!("log  by  hash is : {:?}", log);

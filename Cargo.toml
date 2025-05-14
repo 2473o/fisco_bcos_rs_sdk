@@ -16,7 +16,7 @@ path = "src/lib.rs"
 
 [dependencies]
 #rustc-hex="1.0.0"
-reqwest = { version = "0.12.2", features = [
+reqwest = { version = "0.12.15", features = [
     "json",
     "blocking",
 ] }
@@ -52,11 +52,11 @@ keccak-hash = "0.11.0"
 serde_repr = "0.1.20"
 toml = "0.8.12"
 libloading = "0.8.3"
-libc = "0.2.98"
-pem = "3"
+libc = "0.2.172"
+pem = "3.0.5"
 chrono = "0.4"
-time = "0.3.34"
-openssl = "0.10"
+time = "0.3.41"
+openssl = "0.10.72"
 anyhow = "1"
 
 # log = "0.4"
@@ -81,6 +81,9 @@ hex-literal = { version = "1" }
 
 [features]
 default = [
+    "bcos3sdk_ffi",
+    "no_2sdk",
+    "gm",
 ]
 #default = ["bcos3sdk_ffi","bcos2sdk_ffi"]
 #default = ["bcos2sdk_ffi"]

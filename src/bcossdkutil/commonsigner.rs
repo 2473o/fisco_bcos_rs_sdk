@@ -19,7 +19,7 @@ unused_variables,
 unused_assignments
 )]
 
-use std::convert::From;
+// use std::convert::From;
 
 //#[macro_use]
 use lazy_static::lazy_static;
