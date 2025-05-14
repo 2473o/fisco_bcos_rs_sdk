@@ -6,6 +6,8 @@ use rust_gears_sdk::{
 #[cfg(not(feature = "no_2sdk"))]
 #[test]
 pub fn test_json_rpc() {
+    use serde_json::json;
+
     let groupid = 1;
     let config = ClientConfig::load("conf/client_config.toml").unwrap();
     let mut client = BcosRPC::new(&config).unwrap();

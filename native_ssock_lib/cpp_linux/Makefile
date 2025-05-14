@@ -21,7 +21,7 @@ tasslobj =  $(wildcard ./tassl/*.o)
 #cryptobj =  $(wildcard ./crypto/*.o) 
 cryptobj = 
 #for openssl & tassl
-OPENSSL_DIR=$(TASSL)
+OPENSSL_DIR=/home/alex/Project/FiscoBCOS/tassl
 OPENSSL_INCLUDES=-I$(OPENSSL_DIR)/include
 OPENSSL_LIBS=-L$(OPENSSL_DIR)-ldl
 #OPENSSL_LIBS=-ldl

@@ -2,14 +2,14 @@
   异步方式有待todo，需要异步方式的，可以参考回调函数定义来实现
 */
 
-use std::ffi::{CStr, CString};
-use std::ptr::NonNull;
-use std::sync::atomic::{AtomicU64, Ordering};
-
 use encoding::all::GBK;
 use encoding::{DecoderTrap, Encoding};
 use libc::{c_char, c_int, c_longlong, c_void};
 use serde_json::Value as JsonValue;
+use std::ffi::{CStr, CString};
+use std::ptr::NonNull;
+use std::sync::atomic::{AtomicU64, Ordering};
+use std::sync::{Arc, Mutex};
 // use time::{Duration, Tm};
 use chrono::{self, DateTime, Utc};
 
@@ -25,15 +25,31 @@ use crate::bcossdkutil::fileutils;
 use crate::bcossdkutil::kisserror::{KissErrKind, KissError};
 use crate::{kisserr, kisserrcode, str2p};
 
-//定义一个结构体，简单包装sdk指针，有待扩展
+pub fn wrap_c_ptr(ptr: *const c_void) -> Option<Arc<Mutex<NonNull<c_void>>>> {
+    NonNull::new(ptr as *mut c_void).map(|p| Arc::new(Mutex::new(p)))
+}
+
+#[derive(Debug)]
+pub struct ThreadSafePtr(NonNull<c_void>);
+
+impl ThreadSafePtr {
+    /// 返回内部 NonNull 指向的原生可变指针
+    pub fn as_ptr(&self) -> *mut c_void {
+        self.0.as_ptr()
+    }
+}
+
+unsafe impl Send for ThreadSafePtr {}
+unsafe impl Sync for ThreadSafePtr {}
+
 pub struct Bcos3Client {
     pub crytotype: i32,
     pub hashtype: HashType,
-    pub keypair: Option<NonNull<c_void>>,
+    pub keypair: Option<Arc<Mutex<ThreadSafePtr>>>,
     pub account: BcosAccount,
     pub config: ClientConfig,
     pub bcos3sdkini: Bcos3sdkIni,
-    pub sdk: Option<NonNull<c_void>>,
+    pub sdk: Option<Arc<Mutex<ThreadSafePtr>>>,
     pub clientname: String,
     pub group: String,
     pub chainid: String,
@@ -95,29 +111,27 @@ impl Bcos3Client {
     }
 
     fn check_sdk_ptr(&self) -> Result<*const c_void, KissError> {
-        let sdk_ptr = match self.sdk {
-            Some(non_null) => non_null.as_ptr() as *const c_void, // Convert NonNull<c_void> to *const c_void
-            None => {
-                return kisserr!(KissErrKind::Error, "BCOS3 SDK is not initialized");
-            }
+        let sdk_ptr = match self.with_sdk(|p| p) {
+            Some(sdk) => return Ok(sdk),
+            None => return kisserr!(KissErrKind::Error, "BCOS3 SDK is not initialized"),
         };
 
-        Ok(sdk_ptr)
+        // let sdk_ptr = match &self.sdk {
+        //     Some(sdk_arc) => {
+        //         let sdk_ptr = sdk_arc.lock().unwrap();
+        //         return Ok(sdk_ptr.as_ptr() as *const c_void);
+        //     } // Convert NonNull<c_void> to *const c_void
+        //     None => {
+        //         return kisserr!(KissErrKind::Error, "BCOS3 SDK is not initialized");
+        //     }
+        // };
     }
 
     pub fn new(configfile: &str) -> Result<Self, KissError> {
         unsafe {
             let config = ClientConfig::load(configfile)?;
-            let sdk = init_bcos3sdk_lib(config.bcos3.sdk_config_file.as_str());
 
-            // if sdk == 0 as *const c_void {
-            //     return kisserr!(
-            //         KissErrKind::Error,
-            //         "BCOS3 C LIB is NOT init;ERROR:{}:{}",
-            //         bcos_sdk_get_last_error(),
-            //         Bcos3Client::getLastErrMessage()
-            //     );
-            // }
+            let sdk: *const c_void = init_bcos3sdk_lib(config.bcos3.sdk_config_file.as_str());
 
             if sdk.is_null() {
                 return kisserr!(
@@ -127,6 +141,10 @@ impl Bcos3Client {
                     Bcos3Client::getLastErrMessage()
                 );
             }
+
+            let sdk_ptr = NonNull::new(sdk.cast_mut())
+                .map(ThreadSafePtr)
+                .map(|p| Arc::new(Mutex::new(p)));
 
             if bcos_sdk_get_last_error() != 0 {
                 return kisserr!(
@@ -151,7 +169,7 @@ impl Bcos3Client {
                     cryptotype = 1;
                 }
             }
-            let keypair =
+            let keypair: *const c_void =
                 bcos_sdk_create_keypair_by_hex_private_key(cryptotype, str2p!(privkey.as_str()));
 
             if keypair.is_null() {
@@ -159,16 +177,20 @@ impl Bcos3Client {
                 return kisserr!(KissErrKind::Error, "Failed to create keypair;",);
             }
 
+            let keypair_ptr = NonNull::new(keypair.cast_mut())
+                .map(ThreadSafePtr)
+                .map(|p| Arc::new(Mutex::new(p)));
+
             let client = Bcos3Client {
                 clientname: "BCOS3".to_string(),
                 crytotype: cryptotype,
                 hashtype,
-                sdk: NonNull::new(sdk as *mut c_void),
+                sdk: sdk_ptr,
                 group: config.bcos3.group.clone(),
                 chainid: "chain0".to_string(),
                 config,
                 bcos3sdkini,
-                keypair: NonNull::new(keypair as *mut c_void),
+                keypair: keypair_ptr,
                 account,
                 node: "".to_string(),
                 reqcounter: AtomicU64::new(0),
@@ -180,13 +202,22 @@ impl Bcos3Client {
     }
 
     pub fn finish(&mut self) {
-        if let Some(keypair) = self.keypair {
-            unsafe { bcos_sdk_destroy_keypair(keypair.as_ptr()) };
-        }
-        if let Some(sdk) = self.sdk {
-            unsafe { bcos_sdk_destroy(sdk.as_ptr()) };
+        if let Some(sdk_arc) = &self.sdk {
+            if let Ok(sdk) = sdk_arc.lock() {
+                unsafe {
+                    bcos_sdk_stop(sdk.as_ptr());
+                    bcos_sdk_destroy(sdk.as_ptr());
+                }
+            }
         }
 
+        if let Some(keypair_arc) = &self.keypair {
+            if let Ok(keypair) = keypair_arc.lock() {
+                unsafe {
+                    bcos_sdk_destroy_keypair(keypair.as_ptr());
+                }
+            }
+        }
         // unsafe {
         //     if self.sdk == 0 as *const c_void {
         //         return;
@@ -200,14 +231,10 @@ impl Bcos3Client {
 
     pub fn getBlockNumber(&self) -> Result<u64, KissError> {
         self.reqcounter.fetch_add(1, Ordering::Relaxed);
-        unsafe {
-            let sdk_ptr = match self.sdk {
-                Some(non_null) => non_null.as_ptr() as *const c_void, // Convert NonNull<c_void> to *const c_void
-                None => {
-                    return kisserr!(KissErrKind::Error, "BCOS3 SDK is not initialized");
-                }
-            };
 
+        let sdk_ptr = self.check_sdk_ptr()?;
+
+        unsafe {
             let cbfuture = Bcos3SDKFuture::create(
                 Bcos3SDKFuture::next_seq(),
                 "getBlockNumber",
@@ -266,12 +293,12 @@ impl Bcos3Client {
                 }
                 return kisserr!(
                     KissErrKind::Error,
-                    "get blocklimit from chain error,res : {}",
+                    "get blocklimit from chain error,resz : {}",
                     new_blockLimit
                 );
             }
             self.lastblocklimit = new_blockLimit as u64;
-            // self.lastblocklimittime = time::now();
+            // self.lastblocklimittime = time::now();z
             self.lastblocklimittime = chrono::Utc::now();
             Ok(self.lastblocklimit)
         }
@@ -280,11 +307,9 @@ impl Bcos3Client {
     pub fn getPbftView(&self) -> Result<u64, KissError> {
         self.reqcounter.fetch_add(1, Ordering::Relaxed);
         unsafe {
-            let sdk_ptr = match self.sdk {
-                Some(non_null) => non_null.as_ptr() as *const c_void, // Convert NonNull<c_void> to *const c_void
-                None => {
-                    return kisserr!(KissErrKind::Error, "BCOS3 SDK is not initialized");
-                }
+            let sdk_ptr = match self.with_sdk(|p| p) {
+                Some(sdk) => sdk,
+                None => return kisserr!(KissErrKind::Error, "BCOS3 SDK is not initialized"),
             };
 
             let cbfuture = Bcos3SDKFuture::create(
@@ -701,8 +726,16 @@ impl Bcos3Client {
             let p_signed_tx = Box::into_raw(Box::new(0 as *mut c_char));
             let blocklimit = self.getBlocklimit()?;
 
-            let keypair_ptr = match self.keypair {
-                Some(non_null) => non_null.as_ptr() as *const c_void, // Convert NonNull<c_void> to *const c_void
+            // let keypair_ptr = match self.keypair {
+            //     Some(non_null) => non_null.as_ptr() as *const c_void, // Convert NonNull<c_void> to *const c_void
+            //     None => {
+            //         tracing::error!(target:"bcossdk", "KeyPair null");
+            //         return kisserr!(KissErrKind::Error, "KeyPair null");
+            //     }
+            // };
+
+            let keypair_ptr = match self.with_keypair(|p| p) {
+                Some(keypair) => keypair,
                 None => {
                     tracing::error!(target:"bcossdk", "KeyPair null");
                     return kisserr!(KissErrKind::Error, "KeyPair null");
@@ -818,11 +851,92 @@ impl Bcos3Client {
 
 impl Drop for Bcos3Client {
     fn drop(&mut self) {
-        if let Some(keypair) = self.keypair {
-            unsafe { bcos_sdk_destroy_keypair(keypair.as_ptr()) };
+        if let Some(sdk_arc) = &self.sdk {
+            if let Ok(sdk) = sdk_arc.lock() {
+                unsafe {
+                    bcos_sdk_stop(sdk.as_ptr());
+                    bcos_sdk_destroy(sdk.as_ptr());
+                }
+            }
         }
-        if let Some(sdk) = self.sdk {
-            unsafe { bcos_sdk_destroy(sdk.as_ptr()) };
+
+        if let Some(keypair_arc) = &self.keypair {
+            if let Ok(keypair) = keypair_arc.lock() {
+                unsafe {
+                    bcos_sdk_destroy_keypair(keypair.as_ptr());
+                }
+            }
+        }
+    }
+}
+
+impl Bcos3Client {
+    /// 安全获取 SDK 指针（可变裸指针）
+    pub fn with_sdk_mut<F, R>(&self, f: F) -> Option<R>
+    where
+        F: FnOnce(*mut c_void) -> R,
+    {
+        match &self.sdk {
+            Some(sdk_arc) => match sdk_arc.lock() {
+                Ok(ptr_guard) => {
+                    // 调用 ThreadSafePtr.as_ptr()
+                    let raw = ptr_guard.as_ptr();
+                    Some(f(raw))
+                }
+                Err(_) => None,
+            },
+            None => None,
+        }
+    }
+
+    /// 安全获取 SDK 指针（不可变裸指针）
+    pub fn with_sdk<F, R>(&self, f: F) -> Option<R>
+    where
+        F: FnOnce(*const c_void) -> R,
+    {
+        match &self.sdk {
+            Some(sdk_arc) => match sdk_arc.lock() {
+                Ok(ptr_guard) => {
+                    let raw = ptr_guard.as_ptr() as *const c_void;
+                    Some(f(raw))
+                }
+                Err(_) => None,
+            },
+            None => None,
+        }
+    }
+
+    /// 安全获取 Keypair 指针（可变裸指针）
+    pub fn with_keypair_mut<F, R>(&self, f: F) -> Option<R>
+    where
+        F: FnOnce(*mut c_void) -> R,
+    {
+        match &self.keypair {
+            Some(kp_arc) => match kp_arc.lock() {
+                Ok(kp_nonnull) => {
+                    let ptr = kp_nonnull.as_ptr();
+                    Some(f(ptr))
+                }
+                Err(_) => None,
+            },
+            None => None,
+        }
+    }
+
+    /// 安全获取 Keypair 指针（不可变裸指针）
+    pub fn with_keypair<F, R>(&self, f: F) -> Option<R>
+    where
+        F: FnOnce(*const c_void) -> R,
+    {
+        match &self.keypair {
+            Some(kp_arc) => match kp_arc.lock() {
+                Ok(kp_nonnull) => {
+                    let ptr = kp_nonnull.as_ptr() as *const c_void;
+                    Some(f(ptr))
+                }
+                Err(_) => None,
+            },
+            None => None,
         }
     }
 }

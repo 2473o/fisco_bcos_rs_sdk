@@ -81,9 +81,7 @@ hex-literal = { version = "1" }
 
 [features]
 default = [
-    "bcos3sdk_ffi",
-    "no_2sdk",
-    "gm",
+ "all"
 ]
 #default = ["bcos3sdk_ffi","bcos2sdk_ffi"]
 #default = ["bcos2sdk_ffi"]
@@ -103,7 +101,6 @@ libtestcallback = [
 all = [
     "gm",
     "bcos3sdk_ffi",
-    "libtestcallback",
     "bcos3sdk_native",
     "bcos2sdk_ffi",
     "tassl_sock_ffi",
