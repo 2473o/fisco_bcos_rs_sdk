@@ -23,7 +23,17 @@ pub fn test_ssock() {
     use std::{ffi::CString, thread, time::Duration};
 
     use libc::{c_char, c_int};
-    use rust_gears_sdk::{bcos2sdk::{bcos2_ssl_ffi::{ssock_create, ssock_finish, ssock_init, ssock_recv, ssock_send, ssock_set_echo_mode, ssock_try_connect}, bcos_ssl_native::getNodeVersionPack, channelpack::ChannelPack}, str2p};
+    use rust_gears_sdk::{
+        bcos2sdk::{
+            bcos2_ssl_ffi::{
+                ssock_create, ssock_finish, ssock_init, ssock_recv, ssock_send,
+                ssock_set_echo_mode, ssock_try_connect,
+            },
+            bcos_ssl_native::getNodeVersionPack,
+            channelpack::ChannelPack,
+        },
+        str2p,
+    };
 
     println!("test ssock ffi");
     unsafe {
