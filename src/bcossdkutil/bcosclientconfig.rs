@@ -72,6 +72,13 @@ pub struct Bcos3Config {
 }
 
 impl Bcos3Config {
+    pub fn new(sdk_config_file: String, group: String) -> Self {
+        Bcos3Config {
+            sdk_config_file,
+            group,
+        }
+    }
+
     pub fn default() -> Self {
         Bcos3Config {
             sdk_config_file: "./bcos3sdklib/bcos3_sdk_config.ini".to_string(),
@@ -144,14 +151,19 @@ impl ChannelConfig {
             cacert: "sdk/ca.crt".to_string(),
             sdkcert: "sdk/sdk.crt".to_string(),
             sdkkey: "sdk/sdk.key".to_string(),
+
             #[cfg(feature = "gm")]
             gmcacert: "sdk/gmca.crt".to_string(),
+
             #[cfg(feature = "gm")]
             gmsdkcert: "sdk/gmsdk.crt".to_string(),
+
             #[cfg(feature = "gm")]
             gmsdkkey: "sdk/gmsdk.key".to_string(),
+
             #[cfg(feature = "gm")]
             gmensdkcert: "sdk/gmensdk.crt".to_string(),
+
             #[cfg(feature = "gm")]
             gmensdkkey: "sdk/gmensdk.key".to_string(),
             timeout: 10,
@@ -165,7 +177,9 @@ pub struct CommonConfig {
     pub crypto: BcosCryptoKind,
     pub accountpem: String,
     pub contractpath: String,
-    pub solc: String,   //solc编译器
+
+    #[cfg_attr(feature = "gm", serde(default))]
+    pub solc: String, //solc编译器
 
     #[cfg_attr(not(feature = "gm"), serde(default))]
     #[cfg(feature = "gm")]
@@ -179,11 +193,11 @@ pub struct ClientConfig {
     pub common: CommonConfig,
     #[cfg(feature = "bcos3sdk_ffi")]
     pub bcos3: Bcos3Config,
-    #[cfg(not(feature="no_2sdk"))]
+    #[cfg(not(feature = "no_2sdk"))]
     pub bcos2: Bcos2ChainConfig,
-    #[cfg(not(feature="no_2sdk"))]
+    #[cfg(not(feature = "no_2sdk"))]
     pub rpc: RpcConfig,
-    #[cfg(not(feature="no_2sdk"))]
+    #[cfg(not(feature = "no_2sdk"))]
     pub channel: ChannelConfig,
     pub configfile: Option<String>,
 }

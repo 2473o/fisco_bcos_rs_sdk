@@ -202,23 +202,28 @@ impl Bcos3Client {
     }
 
     pub fn finish(&mut self) {
-        if let Some(sdk_arc) = &self.sdk {
+        if let Some(sdk_arc) = self.sdk.take() {
             if let Ok(sdk) = sdk_arc.lock() {
-                unsafe {
-                    bcos_sdk_stop(sdk.as_ptr());
-                    bcos_sdk_destroy(sdk.as_ptr());
+                let ptr = sdk.as_ptr();
+                if !ptr.is_null() {  // 检查指针是否有效
+                    unsafe {
+                        bcos_sdk_stop(ptr);
+                        bcos_sdk_destroy(ptr);
+                    }
                 }
             }
         }
-
-        if let Some(keypair_arc) = &self.keypair {
+    
+        if let Some(keypair_arc) = self.keypair.take() {
             if let Ok(keypair) = keypair_arc.lock() {
-                unsafe {
-                    bcos_sdk_destroy_keypair(keypair.as_ptr());
+                let ptr = keypair.as_ptr();
+                if !ptr.is_null() {  // 检查指针是否有效
+                    unsafe {
+                        bcos_sdk_destroy_keypair(ptr);
+                    }
                 }
             }
         }
-        // unsafe {
         //     if self.sdk == 0 as *const c_void {
         //         return;
         //     }
